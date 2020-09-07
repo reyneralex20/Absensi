@@ -1,3 +1,42 @@
+<?php
+    require_once ("db.php");
+    if(isset($_POST['login'])){
+        $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_STRING);
+        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
+
+
+        // $hash=password_hash($password,PASSWORD_DEFAULT);
+
+        $sql = "SELECT * FROM user WHERE username= '$username'";
+        $result =  $conn->query($sql);
+        // echo var_dump($result);
+
+        $count=mysqli_num_rows($result);
+
+        if($count == 1){
+            while ($row = $result->fetch_assoc()) {
+                if(password_verify($password,$row['password'])){
+                    session_start();
+                    $_SESSION['username']=$username;
+                    $_SESSION['namalengkap']=$row['nama_lengkap'];
+                    $_SESSION['NIP']=$row['NIP'];
+                    $_SESSION['id']=$row['id'];
+                    // echo var_dump($_SESSION);
+                    // echo "password is valid";
+
+                    header("Location: home.php");
+                }else{
+                    echo "invalid passsword";
+                }
+            }
+        }
+    }
+    if(isset($_GET['logout'])){
+        session_start();
+        session_destroy();
+        header("Location: login.php");
+    }
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -13,22 +52,21 @@
             <div class="row">
                 <div class="col justify-content-center">
                 <h2>Login</h2>
-                <form method="POST" action="home.php">
+                <form method="POST" action="">
                     <div class="row w-100 m-auto">
                         <div class="col form-group">
                             <label for="loginUsername">Username : </label>
-                            <input type="text" class="form-control" id="loginId" name="loginTest" placeholder="Username">
+                            <input type="text" class="form-control" id="loginId" name="username" placeholder="Username">
                         </div>
                     </div>
                     <div class="row w-100 m-auto">
                         <div class="col form-group ">
                             <label for="loginPass">Password : </label>
-                            <input type="password"  class="form-control" id="loginPass" name="passTest" placeholder="password"><br>
+                            <input type="password"  class="form-control" id="loginPass" name="password" placeholder="password"><br>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="submit" class="btn btn-primary" name="login">Login</button>
                 </form>
-
             </div>
             </div>
         </div>

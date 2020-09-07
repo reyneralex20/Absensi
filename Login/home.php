@@ -1,3 +1,12 @@
+<?php
+    session_start();
+    // echo var_dump($_SESSION);
+    if(isset($_SESSION['username'])) {
+        // echo "SUDAH LOGIN";
+    } else {
+        header("Location:login.php");
+    }
+?>
 <!DOCTYPE html>
 <html>
 
@@ -26,12 +35,12 @@
             </div>
 
             <ul class="list-unstyled components">
-                <h3 class="text-center">Fizi</h3>
+                <h3 class="text-center"><?php echo $_SESSION['namalengkap']; ?></h3>
                 <li class="active">
                     <a href="home.php">Lihat Absensi</a>
                 </li>
                 <li>
-                    <a href="login.php">Log out</a>
+                    <a href="login.php?logout=1">Log out</a>
                 </li>
             </ul>
         </nav>
