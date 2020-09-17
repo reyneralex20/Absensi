@@ -56,7 +56,9 @@
             <div class="row">
                 <div class="col text-center">
                     <label>Time in :</label>
-                    <input type="textTimeIn" name="waktuAbsenIn" id="timeIn" readonly>
+                    <input type="textTimeIn" name="waktuAbsenIn" id="timeIn" value="<?php if (isset($_GET['jam_masuk'])) {
+                        echo $_GET['jam_masuk'];
+                    }  ?>" readonly>
                 </div>
             </div>
             <div class="row">
