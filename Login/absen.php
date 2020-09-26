@@ -72,7 +72,15 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col text-center mt-2">
+                    <input id="keterangan" type="text" name="keterangan" placeholder="Keterangan libur di sini">
+                    <button type="submit" name="buttonLibur" id="btnLibur" > Hari Libur</button>
+                    <div id="hasilLibur">
 
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -119,6 +127,24 @@
                 })
                 $("#timeOut").attr("disabled", true);
             });
+
+            $("#btnLibur").click(()=>{
+                $.ajax({
+                    url:'ajax.php',
+                    data:{
+                        act:'libur',
+                        keterangan: $("#keterangan").val()
+                    },
+                    type:'post',
+                    dataType: 'json',
+                    success: function(res){
+                        if(res['status']==200){
+                            $("#hasilLibur").html("Tanggal "+res['content']['tanggal']+" adalah hari libur "+ $("#keterangan").val());
+                        }
+                    }
+                })
+                $("#timeIn").attr("disabled", true);
+            })
         });
     </script>
 </body>
