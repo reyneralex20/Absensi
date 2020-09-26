@@ -37,7 +37,10 @@
             <ul class="list-unstyled components">
                 <h3 class="text-center"><?php echo $_SESSION['namalengkap']; ?></h3>
                 <li class="active">
-                    <a href="home.php">Lihat Absensi</a>
+                    <a href="absen.php">Absen</a>
+                </li>
+                <li>
+                    <a href="lihatAbsensi.php">Lihat Keseluruhan Absensi</a>
                 </li>
                 <li>
                     <a href="login.php?logout=1">Log out</a>
@@ -92,7 +95,7 @@
                     dataType: 'json',
                     success: function(res){
                         if(res['status']==200){
-                            $("#hasilTimeIn").html("Anda telah time in pada:<br/>"+res['content']['tanggal']+"<br/>pukul<br/>"+res['content']['jam_masuk']);
+                            $("#hasilTimeIn").html("Anda telah time in pada:<br/>"+res['content']['tanggal']+"<br/>pukul<br/>"+res['content']['scan_masuk']);
                         }
                     }
                 });
@@ -110,7 +113,7 @@
                     dataType: 'json',
                     success: function(res){
                         if(res['status']==200){
-                            $("#hasilTimeOut").html("Anda telah time out pada:<br/>"+res['content']['tanggal']+"<br/>pukul<br/>"+res['content']['jam_pulang']);
+                            $("#hasilTimeOut").html("Anda telah time out pada:<br/>"+res['content']['tanggal']+"<br/>pukul<br/>"+res['content']['scan_keluar']);
                         }
                     }
                 })

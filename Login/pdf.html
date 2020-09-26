@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <style>
+            .tabelabsensi, .tabelabsensi th, .tabelabsensi td{
+                border: 1px solid black;
+                border-collapse: collapse;
+                text-align: center;
+            }
+            .tabelabsensi{
+                margin-top:15px;
+                margin-bottom:50px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="">
+            <table>
+                <tr>
+                    <td>No. ID </td>
+                    <td>{noId}</td>
+                    <td>Periode Waktu</td>
+                </tr>
+                <tr>
+                    <td>Nama </td>
+                    <td>{nama}</td>
+                    <td>Dari {tglMulai} s/d {tglSelesai}</td>
+                </tr>
+                <tr>
+                    <td>NIP</td>
+                    <td>{nip}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="">
+            <table class="tabelabsensi">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Jam Masuk</th>
+                        <th>Jam Pulang</th>
+                        <th>Scan Masuk</th>
+                        <th>Scan Keluar</th>
+                        <th>Terlambat</th>
+                        <th>Pulang Cepat</th>
+                        <th>Lembur</th>
+                        <th>Jam Kerja</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {tableBody}
+                </tbody>
+            </table>
+        </div>
+        <div style="float:right">
+            Bandung, {tglttd} <br>
+            Operator SMAN 15 Bandung <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            WIDIA TRIASTUTI, S.T <br>
+            NIP 198203292014112002
+        </div>
+    </body>
+
+</html>
