@@ -31,12 +31,12 @@
 <body>
     <div class="wrapper">
         <nav id="sidebar" style="height: 100vh">
-            <div class="sidebar-header">
-                <img src="/img/test1.png" class="rounded-circle" alt="usernamePP" style="width:200px;height:200px">
+            <div class="sidebar-header text-center">
+                <img src="/img/pp.png" class="rounded-circle" alt="usernamePP" style="width:150px;height:150px">
             </div>
 
             <ul class="list-unstyled components">
-                <h3 class="text-center"><?php echo $_SESSION['namalengkap']; ?></h3>
+                <h5 class="text-center"><?php echo $_SESSION['namalengkap']; ?></h5>
                 <li>
                     <a href="absen.php">Absen</a>
                 </li>
@@ -51,8 +51,18 @@
 
         <!-- Page Content  -->
         <div id="content">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="btn btn-primary" id="sidebarCollapse" class="btn btn-info navbar-btn">
+                            <i class="fa">&#xf0c9;</i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
             <div class="row">
-                <div class="col text-center">
+                <div class="col text-center table-responsive-sm">
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
@@ -139,6 +149,9 @@
             //     })
             // })
         })
+        $('#sidebarCollapse').on('click',function(){
+            $('#sidebar').toggleClass('active');
+        });
     </script>
 </body>
 

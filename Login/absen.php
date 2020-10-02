@@ -29,13 +29,14 @@
 
 <body>
     <div class="wrapper">
-        <nav id="sidebar" style="height: 100vh">
-            <div class="sidebar-header">
-                <img src="/img/test1.png" class="rounded-circle" alt="usernamePP" style="width:200px;height:200px">
+        <!-- sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header text-center">
+                <img src="/img/pp.png" class="rounded-circle" alt="usernamePP" style="width:150px;height:150px">
             </div>
 
             <ul class="list-unstyled components">
-                <h3 class="text-center"><?php echo $_SESSION['namalengkap']; ?></h3>
+                <h5 class="text-center"><?php echo $_SESSION['namalengkap']; ?></h5>
                 <li class="active">
                     <a href="absen.php">Absen</a>
                 </li>
@@ -50,15 +51,25 @@
 
         <!-- Page Content  -->
         <div id="content">
-            <div class="row text-center w-25 p-3 mx-auto mt-5">
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="btn btn-primary" id="sidebarCollapse" class="btn btn-info navbar-btn">
+                            <i class="fa">&#xf0c9;</i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="row text-center p-3 mx-auto mt-5">
                 <div class="col text-center">
                     <h1>Hello</h1>
-                    <h3 class="text-center"><?php echo $_SESSION['namalengkap']; ?></h3>
+                    <h5 class="text-center" id="namaID"><?php echo $_SESSION['namalengkap']; ?></h5>
                 </div>
             </div>
             <div class="row">
                 <div class="col text-center">
-                    <button type="submit" name="buttonIn" id="timeIn">Time in</button>
+                    <button type="submit" class="btn btn-primary" name="buttonIn" id="timeIn">Time in</button>
                     <div id="hasilTimeIn">
 
                     </div>
@@ -66,7 +77,7 @@
             </div>
             <div class="row">
                 <div class="col text-center mt-2">
-                    <button type="submit" name="buttonOut" id="timeOut" disabled="disabled"> Time out</button>
+                    <button type="submit" class="btn btn-primary" name="buttonOut" id="timeOut" disabled="disabled"> Time out</button>
                     <div id="hasilTimeOut">
 
                     </div>
@@ -74,8 +85,8 @@
             </div>
             <div class="row">
                 <div class="col text-center mt-2">
-                    <input id="keterangan" type="text" name="keterangan" placeholder="Keterangan libur di sini">
-                    <button type="submit" name="buttonLibur" id="btnLibur" > Hari Libur</button>
+                    <input id="keterangan" type="text" name="keterangan" placeholder="Isi Keterangan libur">
+                    <button type="submit" class="btn btn-primary" name="buttonLibur" id="btnLibur" > Hari Libur</button>
                     <div id="hasilLibur">
 
                     </div>
@@ -145,6 +156,12 @@
                 })
                 $("#timeIn").attr("disabled", true);
             })
+
+            $('#sidebarCollapse').on('click',function(){
+                $('#sidebar').toggleClass('active');
+            });
+
+
         });
     </script>
 </body>
