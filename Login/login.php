@@ -24,8 +24,7 @@
                     // echo var_dump($_SESSION);
                     // echo "password is valid";
 
-                    // header("Location: absen.php");
-                    header("Location: /");
+                    header("Location: absen.php");
                 }else{
                     echo "invalid passsword";
                 }

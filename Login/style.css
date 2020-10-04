@@ -54,7 +54,6 @@ a:focus {
     display: flex;
     width: 100%;
     align-items: stretch;
-    height: 100vh;
 }
 
 #sidebar {
@@ -152,7 +151,6 @@ a.article:hover {
     padding: 20px;
     min-height: 100vh;
     transition: all 0.3s;
-    overflow-y: auto;
 }
 
 /* ---------------------------------------------------

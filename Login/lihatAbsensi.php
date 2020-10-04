@@ -38,7 +38,7 @@
             <ul class="list-unstyled components">
                 <h5 class="text-center"><?php echo $_SESSION['namalengkap']; ?></h5>
                 <li>
-                    <a href="/">Absen</a>
+                    <a href="absen.php">Absen</a>
                 </li>
                 <li class="active">
                     <a href="lihatAbsensi.php">Lihat Keseluruhan Absensi</a>
@@ -61,34 +61,7 @@
                 </div>
             </nav>
 
-            <form class="month-selector" target="_blank" action="ajax.php" method="post">
-                <div class="row justify-content-center my-2">
-                    <div class="col-sm-5">
-                        <select class="form-control" id="bulanSelector" name="bulan">
-                            <option value="None" disabled selected>-- Pilih Bulan --</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row justify-content-center my-2">
-                    <div class="col-sm-5">
-                        <select class="form-control" id="tahunSelector" name="tahun">
-                            <option value="None" disabled selected>-- Pilih Tahun --</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row justify-content-center my-2">
-                    <div class="col-sm-5 text-center">
-                        <button class="btn btn-primary" id="findAbsensi">Lihat Absensi</button>
-                    </div>
-                </div>
-                <div class="row justify-content-center my-2">
-                    <div class="col-sm-5 text-center">
-                        <button type="submit "class="btn btn-success" id="printAbsensi">Print Absensi</button>
-                    </div>
-                </div>
-                <input type="hidden" name="act" value="printToPdf">
-            </form>
-            <div class="row mt-3">
+            <div class="row">
                 <div class="col text-center table-responsive-sm">
                     <table class="table table-striped table-bordered">
                         <thead>
@@ -104,31 +77,33 @@
                                 <th>Jam Kerja</th>
                             </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody>
+
+                        </tbody>
                     </table>
-                    <!--<form class="" action="ajax.php" method="post">-->
-                    <!--    <select class="selector" name="bulan">-->
-                    <!--        <option value="1">Januari</option>-->
-                    <!--        <option value="2">Februari</option>-->
-                    <!--        <option value="3">Maret</option>-->
-                    <!--        <option value="4">April</option>-->
-                    <!--        <option value="5">Mei</option>-->
-                    <!--        <option value="6">Juni</option>-->
-                    <!--        <option value="7">Juli</option>-->
-                    <!--        <option value="8">Agustus</option>-->
-                    <!--        <option value="9">September</option>-->
-                    <!--        <option value="10">Oktober</option>-->
-                    <!--        <option value="11">November</option>-->
-                    <!--        <option value="12">Desember</option>-->
-                    <!--    </select>-->
-                    <!--    <select class="selector" name="tahun">-->
-                    <!--        <option value="2019">2019</option>-->
-                    <!--        <option value="2020">2020</option>-->
-                    <!--        <option value="2021">2021</option>-->
-                    <!--    </select>-->
-                    <!--    <input type="submit" value="Print">-->
-                    <!--    <input type="hidden" name="act" value="printToPdf">-->
-                    <!--</form>-->
+                    <form class="" action="ajax.php" method="post">
+                        <select class="selector" name="bulan">
+                            <option value="1">Januari</option>
+                            <option value="2">Februari</option>
+                            <option value="3">Maret</option>
+                            <option value="4">April</option>
+                            <option value="5">Mei</option>
+                            <option value="6">Juni</option>
+                            <option value="7">Juli</option>
+                            <option value="8">Agustus</option>
+                            <option value="9">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                        <select class="selector" name="tahun">
+                            <option value="2019">2019</option>
+                            <option value="2020">2020</option>
+                            <option value="2021">2021</option>
+                        </select>
+                        <input type="submit" value="Print">
+                        <input type="hidden" name="act" value="printToPdf">
+                    </form>
                 </div>
             </div>
         </div>
@@ -142,82 +117,24 @@
 
     <script>
         $(document).ready(function(){
-            $("#findAbsensi").click((e) => {
-                $(".table tbody").empty();
-                e.preventDefault();
-                var form = $(e.target).closest("form");
-                
-                $.ajax({
-                    url: 'ajax.php',
-                    data:{
-                        act:'getAbsensi',
-                        form: form.serialize()
-                    },
-                    type:'post',
-                    dataType:'json',
-                    success: function(res){
-                        res['content'].forEach((item, i) => {
-                            console.log(item);
-                            if(item['is_libur']==1){
-                                $('.table tbody').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td colspan="6">'+item['keterangan']+'</td></tr>');
-                            }else{
-                                for(i in item) {
-                                    if(item[i] === null) item[i] = "-";
-                                }
-                                $('.table tbody').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td>'+item['scan_masuk']+'</td><td>'+item['scan_keluar']+'</td><td>'+item['terlambat']+'</td><td>'+item['pulang_cepat']+'</td><td>'+item['lembur']+'</td><td>'+item['jam_kerja']+'</td></tr>');
-                            }
-                        });
-                    }
-                });
-                // $('#btnPrint').click(()=>{
-                //     $.ajax({
-                //         url:'ajax.php',
-                //         data:{
-                //             act:'printToPdf'
-                //         },
-                //         type:'post',
-                //         dataType:'json',
-                //         success:function(res){
-                //             console.log(res);
-                //         }
-                //     })
-                // })
-            })
-            
             $.ajax({
                 url: 'ajax.php',
-                data: {
-                    act: 'getMonths'
+                data:{
+                    act:'getAbsensi'
                 },
-                type: 'post',
-                dataType: 'json',
-                success: (res) => {
-                    res['months'].forEach(function(item) {
-                        $("#bulanSelector").append("<option value='"+item.val+"'>"+item.text+"</option>");
-                    });
-                    res['years'].forEach(function(item) {
-                        $("#tahunSelector").append("<option value='"+item+"'>"+item+"</option>");
+                type:'post',
+                dataType:'json',
+                success: function(res){
+                    res['content'].forEach((item, i) => {
+                        console.log(item);
+                        if(item['is_libur']==1){
+                            $('.table').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td colspan="6">'+item['keterangan']+'</td></tr>');
+                        }else{
+                            $('.table').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td>'+item['scan_masuk']+'</td><td>'+item['scan_keluar']+'</td><td>'+item['terlambat']+'</td><td>'+item['pulang_cepat']+'</td><td>'+item['lembur']+'</td><td>'+item['jam_kerja']+'</td></tr>');
+                        }
                     });
                 }
-            })
-            // $.ajax({
-            //     url: 'ajax.php',
-            //     data:{
-            //         act:'getAbsensi'
-            //     },
-            //     type:'post',
-            //     dataType:'json',
-            //     success: function(res){
-            //         res['content'].forEach((item, i) => {
-            //             console.log(item);
-            //             if(item['is_libur']==1){
-            //                 $('.table').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td colspan="6">'+item['keterangan']+'</td></tr>');
-            //             }else{
-            //                 $('.table').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td>'+item['scan_masuk']+'</td><td>'+item['scan_keluar']+'</td><td>'+item['terlambat']+'</td><td>'+item['pulang_cepat']+'</td><td>'+item['lembur']+'</td><td>'+item['jam_kerja']+'</td></tr>');
-            //             }
-            //         });
-            //     }
-            // });
+            });
             // $('#btnPrint').click(()=>{
             //     $.ajax({
             //         url:'ajax.php',
@@ -231,10 +148,10 @@
             //         }
             //     })
             // })
-            $('#sidebarCollapse').on('click',function(){
-                $('#sidebar').toggleClass('active');
-            });
         })
+        $('#sidebarCollapse').on('click',function(){
+            $('#sidebar').toggleClass('active');
+        });
     </script>
 </body>
 
