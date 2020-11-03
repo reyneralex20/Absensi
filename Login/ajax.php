@@ -3,19 +3,25 @@ include 'db.php';
 require_once('dompdf/autoload.inc.php');
 use Dompdf\Dompdf;
 session_start();
+date_default_timezone_set("Asia/Jakarta");
+
+function convertToHoursMins($time, $format = '%02d:%02d') {
+    if ($time < 1) {
+        return;
+    }
+    $hours = floor($time / 60);
+    $minutes = ($time % 60);
+    return sprintf($format, $hours, $minutes);
+}
 
 if(isset($_POST['act'])) {
     switch ($_POST['act']) {
         case 'timein':
-            date_default_timezone_set("Asia/Jakarta");
-            $time= date("H:i:s");
-            $t=time();
-            $tanggal=date("Y-m-d",$t);
-    
-            $sql="INSERT INTO absensi (user_id,tanggal,scan_masuk) values ('".$_SESSION['id']."','".$tanggal."','".$time."') ";
+            $timeIn = date("Y-m-d H:i:00");
+            $scanMasuk = date("H:i");
+            $sql="INSERT INTO $table_absensi (user_id, time_in, scan_masuk) values ('".$_SESSION['id']."','".$timeIn."', '".$scanMasuk."') ";
             $dataUser= array(
-                "scan_masuk"=>$time,
-                "tanggal"=>$tanggal
+                "scan_masuk"=>$timeIn
             );
     
             if($conn->query($sql)==TRUE){
@@ -33,73 +39,41 @@ if(isset($_POST['act'])) {
             break;
 
         case 'timeout':
-            date_default_timezone_set("Asia/Jakarta");
-            $time= date("H:i:s");
-            $t=time();
-            $tanggal=date("Y-m-d",$t);
+            $timeOut = date("Y-m-d H:i:00");
+            $scanKeluar = date("H:i");
     
-            $sqlTimeIn="SELECT id, scan_masuk, jam_masuk, jam_pulang FROM absensi WHERE user_id= '".$_SESSION['id']."' and tanggal = '".$tanggal."' and scan_keluar is null";
+            $sqlTimeIn = "SELECT * FROM $table_absensi WHERE `user_id`='".$_SESSION['id']."' and `is_libur`='0' and `time_out` is null";
             $result=$conn->query($sqlTimeIn);
             $rows = $result->fetch_assoc();
-            $epoch_jamMasuk = strtotime($rows['jam_masuk']);
-            $epoch_jamPulang = strtotime($rows['jam_pulang']);
-            $epoch_scanMasuk = strtotime($rows['scan_masuk']);
-            $epoch_scanKeluar = strtotime($time);
-            $jamLembur='00:00:00';
-            $jamKerja ='00:00:00';
-    
-            // echo var_dump($rows, $epoch_jamMasuk, $epoch_jamPulang);
-            if($epoch_scanMasuk>$epoch_jamMasuk){
-                $terlambat = "Ya";
-            }else{
-                $terlambat = "Tidak";
+            $epoch_jamMasuk = strtotime($jam_masuk);
+            $epoch_jamPulang = strtotime($jam_pulang);
+            $epoch_scanMasuk = strtotime($rows['time_in']);
+            $epoch_scanKeluar = strtotime($timeOut);
+            
+            $diffMasuk = $epoch_jamMasuk - $epoch_scanMasuk;
+            $diffKeluar = $epoch_scanKeluar - $epoch_jamPulang;
+            $jamKerja = $epoch_scanKeluar - $epoch_scanMasuk;
+            $timeKerja = convertToHoursMins(abs(floor($jamKerja/60)));
+
+            # cek jika terlambat
+            if($diffMasuk < 0) {
+                $menitTerlambat = abs(floor($diffMasuk/60));
+                $timeTerlambat = convertToHoursMins($menitTerlambat);
             }
-    
-            if($epoch_jamPulang>$epoch_scanKeluar){
-                $pulangCepat = "Ya";
-            }else{
-                $pulangCepat = "Tidak";
-                $jamLembur = date("00:i:s", ($epoch_scanKeluar - $epoch_jamPulang));
-                // $diffLembur = abs(strtotime($time) - strtotime($rows['jam_pulang']));
-    
-                // // Convert $diff to minutes
-                // $tminsLembur = $diffLembur/60;
-    
-                // // Get hours
-                // $hoursLembur = floor($tminsLembur/60);
-                // if($hoursLembur < 10) $hoursLembur = str_pad($hoursLembur, 2, '0', STR_PAD_LEFT);
-    
-                // // Get minutes
-                // $minsLembur = $tminsLembur%60;
-                // if($minsLembur < 10) $minsLembur = str_pad($minsLembur, 2, '0', STR_PAD_LEFT);
-    
-                // $jamLembur = "00:".$hoursLembur.":".$minsLembur;
+
+            # cek jika pulang cepat atau lembur
+            if($diffKeluar < 0) {
+                $menitPulangCepat = abs(floor($diffKeluar/60));
+                $timePulangCepat = convertToHoursMins($menitPulangCepat);
+            } else {
+                $menitLembur = abs(floor($diffKeluar/60));
+                $timeLembur = convertToHoursMins($menitLembur);
             }
             
-            $jamKerja = date("00:i:s", ($epoch_scanKeluar - $epoch_scanMasuk));
-            
-            // $diffKerja = abs(strtotime($rows['scan_masuk']) - strtotime($rows['jam_masuk']));
-    
-            // // Convert $diff to minutes
-            // $tminsKerja = $diffKerja/60;
-    
-            // // Get hours
-            // $hoursKerja = floor($tminsKerja/60);
-            // if($hoursKerja < 10) $hoursKerja= str_pad($hoursKerja, 2, '0', STR_PAD_LEFT);
-    
-            // // Get minutes
-            // $minsKerja = $tminsKerja%60;
-            // if($minsKerja < 10) $minsKerja = str_pad($minsKerja, 2, '0', STR_PAD_LEFT);
-    
-            // $jamKerja = "00:".$hoursKerja.":".$minsKerja;
-            // // echo var_dump($jamLembur, $jamKerja, $terlambat, $pulangCepat);
-    
-            $sql= "UPDATE absensi set terlambat= '".$terlambat."', pulang_cepat='".$pulangCepat."', lembur='".$jamLembur."', jam_kerja='".$jamKerja."', scan_keluar = '".$time."' WHERE id='".$rows['id']."'";
-    
-    
+            $sql = "UPDATE $table_absensi set terlambat='".$timeTerlambat."', pulang_cepat='".$timePulangCepat."', lembur='".$timeLembur."', jam_kerja='".$timeKerja."', time_out = '".$timeOut."', scan_keluar = '".$scanKeluar."' WHERE id_absensi='".$rows['id_absensi']."'";
+
             $dataUser=array(
-                "scan_keluar"=>$time,
-                "tanggal"=>$tanggal
+                "scan_keluar"=>$timeOut,
             );
     
             if($conn->query($sql)==TRUE){
@@ -117,14 +91,11 @@ if(isset($_POST['act'])) {
             break;
 
         case 'libur':
-            date_default_timezone_set ("Asia/Jakarta");
-            $time= date("H:i:s");
-            $t=time();
-            $tanggal=date("Y-m-d",$t);
+            $libur = date("Y-m-d");
 
-            $sql="INSERT INTO absensi (user_id,tanggal,is_libur,keterangan) values ('".$_SESSION['id']."','".$tanggal."','1','".$_POST['keterangan']."') ";
+            $sql="INSERT INTO $table_absensi (user_id,time_in,is_libur,keterangan) values ('".$_SESSION['id']."','".$libur."','1','".$_POST['keterangan']."') ";
             $dataUser= array(
-                "tanggal"=>$tanggal
+                "tanggal"=>$libur
             );
 
             if($conn->query($sql)==TRUE){
@@ -143,7 +114,7 @@ if(isset($_POST['act'])) {
 
         case 'getAbsensi':
             parse_str($_POST['form'], $forms);
-            $sql= "SELECT * FROM absensi WHERE user_id= '".$_SESSION['id']."' and month(tanggal)='".$forms['bulan']."' and year(tanggal)='".$forms['tahun']."' order by tanggal asc";
+            $sql= "SELECT * FROM $table_absensi WHERE user_id= '".$_SESSION['id']."' and month(time_in)='".$forms['bulan']."' and year(time_in)='".$forms['tahun']."' order by time_in asc";
             $result = $conn->query($sql);
     
             $dataUser=array();
@@ -163,16 +134,15 @@ if(isset($_POST['act'])) {
             $html = str_replace("{nama}", $_SESSION['namalengkap'],$html);
             $html = str_replace("{nip}",$_SESSION['NIP'],$html);
             //
-            $sql= "SELECT * FROM absensi WHERE user_id= '".$_SESSION['id']."' and month(`tanggal`)= '".$_POST['bulan']."' and year(`tanggal`)='".$_POST['tahun']."' order by tanggal asc";
+            $sql= "SELECT * FROM $table_absensi WHERE user_id= '".$_SESSION['id']."' and month(`time_in`)= '".$_POST['bulan']."' and year(`time_in`)='".$_POST['tahun']."' order by time_in asc";
             $result = $conn->query($sql);
             // echo var_dump($result->fetch_all(MYSQLI_ASSOC));
             $rows = $result->fetch_all(MYSQLI_ASSOC);
     
-            $startDate=$rows[0]['tanggal'];
-            $endDate=$rows[sizeof($rows)-1]['tanggal'];
+            $startDate=$rows[0]['time_in'];
+            $endDate=$rows[sizeof($rows)-1]['time_in'];
             date_default_timezone_set ("Asia/Jakarta");
-            $tanggalTTD=date("d-m-Y");
-    
+            $tanggalTTD=date("d/m/Y");
     
             // echo var_dump($startDate,$endDate);
     
@@ -190,14 +160,14 @@ if(isset($_POST['act'])) {
                 foreach($rows as $row) {
                     if($row['is_libur']==1){
                         $tbl.="<tr>"
-                        ."<td>".$row['tanggal']."</td>"
+                        ."<td>".date("d/m/Y", strtotime($row['time_in']))."</td>"
                         ."<td>".$row['jam_masuk']."</td>"
                         ."<td>".$row['jam_pulang']."</td>"
                         ."<td colspan='6'>".$row['keterangan']."</td>"
                         ."</tr>";
                     }else{
                         $tbl.="<tr>"
-                        ."<td>".$row['tanggal']."</td>"
+                        ."<td>".date("d/m/Y", strtotime($row['time_in']))."</td>"
                         ."<td>".$row['jam_masuk']."</td>"
                         ."<td>".$row['jam_pulang']."</td>"
                         ."<td>".$row['scan_masuk']."</td>"
@@ -211,8 +181,8 @@ if(isset($_POST['act'])) {
                 }
             }
             $html = str_replace("{tableBody}", $tbl, $html);
-            $html = str_replace("{tglMulai}",$startDate, $html);
-            $html = str_replace("{tglSelesai}", $endDate, $html);
+            $html = str_replace("{tglMulai}", date("d/m/Y", strtotime($startDate)), $html);
+            $html = str_replace("{tglSelesai}", date("d/m/Y", strtotime($endDate)), $html);
             $html = str_replace("{tglttd}", $tanggalTTD, $html);
     
             // echo $html;
@@ -231,13 +201,12 @@ if(isset($_POST['act'])) {
     
             $data['content']=$dataUser;
             echo json_encode($data);
-
         break;
         case 'getMonths':
-            $q_months = $conn->query("select distinct month(tanggal) as month from absensi WHERE user_id= '".$_SESSION['id']."'");
+            $q_months = $conn->query("select distinct month(time_in) as month from $table_absensi WHERE user_id= '".$_SESSION['id']."'");
             $months_raw = $q_months->fetch_all(MYSQLI_ASSOC);
             
-            $q_year = $conn->query("select distinct year(tanggal) as year from absensi WHERE user_id= '".$_SESSION['id']."'");
+            $q_year = $conn->query("select distinct year(time_in) as year from $table_absensi WHERE user_id= '".$_SESSION['id']."'");
             $years_raw = $q_year->fetch_all(MYSQLI_ASSOC);
             
             $months = [];
@@ -260,10 +229,10 @@ if(isset($_POST['act'])) {
             echo json_encode($result);
             break;
         case 'checkHasTimed':
-            $q_timed = $conn->query("SELECT * FROM absensi WHERE user_id= '".$_SESSION['id']."' and date(tanggal)=CURDATE() and scan_keluar is null and is_libur='0'");
+            $q_timed = $conn->query("SELECT * FROM _absensi WHERE user_id= '".$_SESSION['id']."' and date(time_in) = CURDATE() and time_out is null and is_libur='0'");
             $timed = $q_timed->fetch_assoc();
             
-            $q_libur = $conn->query("SELECT * FROM absensi WHERE user_id= '".$_SESSION['id']."' and date(tanggal)=CURDATE() and is_libur='1'");
+            $q_libur = $conn->query("SELECT * FROM _absensi WHERE user_id= '".$_SESSION['id']."' and date(time_in) = CURDATE() and is_libur='1'");
             $libur = $q_libur->fetch_assoc();
             
             $result = [
@@ -283,4 +252,3 @@ if(isset($_POST['act'])) {
             break;
     }
 }
-?>

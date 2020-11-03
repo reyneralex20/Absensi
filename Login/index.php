@@ -96,7 +96,7 @@
     </div>
 
     <!-- jQuery CDN - Slim version (=without AJAX) -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"</script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <!-- Popper.JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <!-- Bootstrap JS -->
@@ -115,10 +115,10 @@
                     if(res.status === -1) {
                         $("#timeOut").prop("disabled", false);
                         $("#timeIn, #btnLibur").prop("disabled", true);
-                        $("#hasilTimeIn").html("Anda telah time in pada:<br/>"+res['timed']['tanggal']+"<br/>pukul<br/>"+res['timed']['scan_masuk']);
+                        $("#hasilTimeIn").html("Anda telah time in pada:<br/>"+res['timed']['time_in']);
                     } else if(res.status === -2) {
                         $("#timeIn, #btnLibur").prop("disabled", true);
-                        $("#hasilLibur").html("Tanggal "+res['libur']['tanggal']+" adalah hari libur "+res['libur']['keterangan']);
+                        $("#hasilLibur").html("Tanggal "+new Date(res['libur']['time_in']).toLocaleDateString()+" adalah hari libur "+res['libur']['keterangan']);
                     }
                 }
             })
@@ -132,7 +132,7 @@
                     dataType: 'json',
                     success: function(res){
                         if(res['status']==200){
-                            $("#hasilTimeIn").html("Anda telah time in pada:<br/>"+res['content']['tanggal']+"<br/>pukul<br/>"+res['content']['scan_masuk']);
+                            $("#hasilTimeIn").html("Anda telah time in pada:<br/>"+res['content']['scan_masuk']);
                         }
                     }
                 });
@@ -150,7 +150,7 @@
                     dataType: 'json',
                     success: function(res){
                         if(res['status']==200){
-                            $("#hasilTimeOut").html("Anda telah time out pada:<br/>"+res['content']['tanggal']+"<br/>pukul<br/>"+res['content']['scan_keluar']);
+                            $("#hasilTimeOut").html("Anda telah time out pada:<br/>"+res['content']['scan_keluar']);
                         }
                     }
                 })

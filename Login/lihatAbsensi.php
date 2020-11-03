@@ -83,7 +83,7 @@
                 </div>
                 <div class="row justify-content-center my-2">
                     <div class="col-sm-5 text-center">
-                        <button type="submit "class="btn btn-success" id="printAbsensi">Print Absensi</button>
+                        <button type="submit "class="btn btn-success" id="printAbsensi">Download PDF Absensi</button>
                     </div>
                 </div>
                 <input type="hidden" name="act" value="printToPdf">
@@ -106,29 +106,6 @@
                         </thead>
                         <tbody></tbody>
                     </table>
-                    <!--<form class="" action="ajax.php" method="post">-->
-                    <!--    <select class="selector" name="bulan">-->
-                    <!--        <option value="1">Januari</option>-->
-                    <!--        <option value="2">Februari</option>-->
-                    <!--        <option value="3">Maret</option>-->
-                    <!--        <option value="4">April</option>-->
-                    <!--        <option value="5">Mei</option>-->
-                    <!--        <option value="6">Juni</option>-->
-                    <!--        <option value="7">Juli</option>-->
-                    <!--        <option value="8">Agustus</option>-->
-                    <!--        <option value="9">September</option>-->
-                    <!--        <option value="10">Oktober</option>-->
-                    <!--        <option value="11">November</option>-->
-                    <!--        <option value="12">Desember</option>-->
-                    <!--    </select>-->
-                    <!--    <select class="selector" name="tahun">-->
-                    <!--        <option value="2019">2019</option>-->
-                    <!--        <option value="2020">2020</option>-->
-                    <!--        <option value="2021">2021</option>-->
-                    <!--    </select>-->
-                    <!--    <input type="submit" value="Print">-->
-                    <!--    <input type="hidden" name="act" value="printToPdf">-->
-                    <!--</form>-->
                 </div>
             </div>
         </div>
@@ -158,30 +135,20 @@
                     success: function(res){
                         res['content'].forEach((item, i) => {
                             console.log(item);
+                            let timeInDate = new Date(item['time_in']);
+                            let date = timeInDate.toLocaleDateString();
+
                             if(item['is_libur']==1){
-                                $('.table tbody').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td colspan="6">'+item['keterangan']+'</td></tr>');
+                                $('.table tbody').append('<tr><td>'+date+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td colspan="6">'+item['keterangan']+'</td></tr>');
                             }else{
                                 for(i in item) {
-                                    if(item[i] === null) item[i] = "-";
+                                    if(item[i] === null || item[i] === "") item[i] = "-";
                                 }
-                                $('.table tbody').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td>'+item['scan_masuk']+'</td><td>'+item['scan_keluar']+'</td><td>'+item['terlambat']+'</td><td>'+item['pulang_cepat']+'</td><td>'+item['lembur']+'</td><td>'+item['jam_kerja']+'</td></tr>');
+                                $('.table tbody').append('<tr><td>'+date+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td>'+item['scan_masuk']+'</td><td>'+item['scan_keluar']+'</td><td>'+item['terlambat']+'</td><td>'+item['pulang_cepat']+'</td><td>'+item['lembur']+'</td><td>'+item['jam_kerja']+'</td></tr>');
                             }
                         });
                     }
                 });
-                // $('#btnPrint').click(()=>{
-                //     $.ajax({
-                //         url:'ajax.php',
-                //         data:{
-                //             act:'printToPdf'
-                //         },
-                //         type:'post',
-                //         dataType:'json',
-                //         success:function(res){
-                //             console.log(res);
-                //         }
-                //     })
-                // })
             })
             
             $.ajax({
@@ -200,41 +167,11 @@
                     });
                 }
             })
-            // $.ajax({
-            //     url: 'ajax.php',
-            //     data:{
-            //         act:'getAbsensi'
-            //     },
-            //     type:'post',
-            //     dataType:'json',
-            //     success: function(res){
-            //         res['content'].forEach((item, i) => {
-            //             console.log(item);
-            //             if(item['is_libur']==1){
-            //                 $('.table').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td colspan="6">'+item['keterangan']+'</td></tr>');
-            //             }else{
-            //                 $('.table').append('<tr><td>'+item['tanggal']+'</td><td>'+item['jam_masuk']+'</td><td>'+item['jam_pulang']+'</td><td>'+item['scan_masuk']+'</td><td>'+item['scan_keluar']+'</td><td>'+item['terlambat']+'</td><td>'+item['pulang_cepat']+'</td><td>'+item['lembur']+'</td><td>'+item['jam_kerja']+'</td></tr>');
-            //             }
-            //         });
-            //     }
-            // });
-            // $('#btnPrint').click(()=>{
-            //     $.ajax({
-            //         url:'ajax.php',
-            //         data:{
-            //             act:'printToPdf'
-            //         },
-            //         type:'post',
-            //         dataType:'json',
-            //         success:function(res){
-            //             console.log(res);
-            //         }
-            //     })
-            // })
+
             $('#sidebarCollapse').on('click',function(){
                 $('#sidebar').toggleClass('active');
             });
-        })
+        });
     </script>
 </body>
 

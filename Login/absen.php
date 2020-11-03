@@ -70,33 +70,27 @@
             <div class="row">
                 <div class="col text-center">
                     <button type="submit" class="btn btn-primary" name="buttonIn" id="timeIn">Time in</button>
-                    <div id="hasilTimeIn">
-
-                    </div>
+                    <div id="hasilTimeIn"></div>
                 </div>
             </div>
             <div class="row">
                 <div class="col text-center mt-2">
                     <button type="submit" class="btn btn-primary" name="buttonOut" id="timeOut" disabled="disabled"> Time out</button>
-                    <div id="hasilTimeOut">
-
-                    </div>
+                    <div id="hasilTimeOut"></div>
                 </div>
             </div>
             <div class="row">
                 <div class="col text-center mt-2">
                     <input id="keterangan" type="text" name="keterangan" placeholder="Isi Keterangan libur">
                     <button type="submit" class="btn btn-primary" name="buttonLibur" id="btnLibur" > Hari Libur</button>
-                    <div id="hasilLibur">
-
-                    </div>
+                    <div id="hasilLibur"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- jQuery CDN - Slim version (=without AJAX) -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js"</script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <!-- Popper.JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
     <!-- Bootstrap JS -->
@@ -114,13 +108,13 @@
                     dataType: 'json',
                     success: function(res){
                         if(res['status']==200){
-                            $("#hasilTimeIn").html("Anda telah time in pada:<br/>"+res['content']['tanggal']+"<br/>pukul<br/>"+res['content']['scan_masuk']);
+                            $("#hasilTimeIn").html("Anda telah time in pada:<br/>"+res['content']['scan_masuk']);
                         }
                     }
                 });
                 $("#timeOut").removeAttr("disabled");
                 $("#timeIn").attr("disabled", true);
-            })
+            });
 
             $("#timeOut").click(()=>{
                 $.ajax({
@@ -132,7 +126,7 @@
                     dataType: 'json',
                     success: function(res){
                         if(res['status']==200){
-                            $("#hasilTimeOut").html("Anda telah time out pada:<br/>"+res['content']['tanggal']+"<br/>pukul<br/>"+res['content']['scan_keluar']);
+                            $("#hasilTimeOut").html("Anda telah time out pada:<br/>"+res['content']['scan_keluar']);
                         }
                     }
                 })
@@ -155,12 +149,11 @@
                     }
                 })
                 $("#timeIn").attr("disabled", true);
-            })
+            });
 
             $('#sidebarCollapse').on('click',function(){
                 $('#sidebar').toggleClass('active');
             });
-
 
         });
     </script>
