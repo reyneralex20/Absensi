@@ -229,10 +229,10 @@ if(isset($_POST['act'])) {
             echo json_encode($result);
             break;
         case 'checkHasTimed':
-            $q_timed = $conn->query("SELECT * FROM _absensi WHERE user_id= '".$_SESSION['id']."' and date(time_in) = CURDATE() and time_out is null and is_libur='0'");
+            $q_timed = $conn->query("SELECT * FROM $table_absensi WHERE user_id= '".$_SESSION['id']."' and date(time_in) = CURDATE() and time_out is null and is_libur='0'");
             $timed = $q_timed->fetch_assoc();
             
-            $q_libur = $conn->query("SELECT * FROM _absensi WHERE user_id= '".$_SESSION['id']."' and date(time_in) = CURDATE() and is_libur='1'");
+            $q_libur = $conn->query("SELECT * FROM $table_absensi WHERE user_id= '".$_SESSION['id']."' and date(time_in) = CURDATE() and is_libur='1'");
             $libur = $q_libur->fetch_assoc();
             
             $result = [
